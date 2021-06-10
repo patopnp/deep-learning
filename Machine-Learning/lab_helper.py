@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from matplotlib.colors import ListedColormap
 from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model.logistic import _logistic_loss
+# from sklearn.linear_model.logistic import _logistic_loss
 from scipy.stats import norm
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
