@@ -1,0 +1,7 @@
+Por esta via hago entrega de dos actividades puesto que no he encontrado otra manera de subir la actividad del laboratorio de datos estructurados. 
+Se incluye entonces ademas del mencionado, el laboratorio de metodos de ensamble - Kaggle Rossmann
+
+Entrega del alumno Patricio Petraglia. 
+Actividad: Laboratorio de datos estructurados - Competencia kaggle - Sistema de recomendacion de peliculas.
+Tambien se puede consultar en github:  
+https://github.com/patopnp/deep-learning/blob/main/Machine-Learning/Laboratorio-datos-estructurados/Laboratorio-recomendacion.ipynb
