@@ -1,0 +1,625 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "id": "00a7d66a-5517-47d6-873d-5d0c56c44a8f",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "%load_ext autoreload\n",
+    "%autoreload 2"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "1bfd96d6-eaf8-4f0c-8dca-614b17e227c6",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from frozenlake_helper import get_frozenlake_env, policy_1, policy_2, policy_3, policy_4\n",
+    "import numpy as np"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "id": "129b6dad-29ba-47ff-8e36-d47318c8c6d4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "LEFT = 0\n",
+    "DOWN = 1\n",
+    "RIGHT = 2\n",
+    "UP = 3"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "id": "8b3573bf-2ae2-438a-895b-189809a7cf36",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "policies = [policy_1, policy_2, policy_3, policy_4]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "7e9a415b-4ef5-42ef-944d-636b8b9d49db",
+   "metadata": {},
+   "source": [
+    "# Instancio entorno"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "id": "076f36b7-2df9-42e5-8bed-93df5db66c24",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "env = get_frozenlake_env(is_slippery=False, step_penalty=0)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "fb33328d-5e53-4e85-9353-b2f60fc77996",
+   "metadata": {},
+   "source": [
+    "### Algunas pruebas para familiarizarse con los entornos de openAI"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 6,
+   "id": "1728a58b-e8df-4675-99b8-0878170a70c3",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "S\u001b[41mF\u001b[0mFF\n",
+      "FFFF\n",
+      "HFFG\n",
+      "\n",
+      "5 0 False {'prob': 1.0}\n",
+      "\n",
+      "  (Down)\n",
+      "SFFF\n",
+      "F\u001b[41mF\u001b[0mFF\n",
+      "HFFG\n"
+     ]
+    }
+   ],
+   "source": [
+    "start_position = 1\n",
+    "env.reset(start_position)\n",
+    "env.render()\n",
+    "\n",
+    "# Genéro acción y recibo siguiente estado, recompenza y si terminó el episodio\n",
+    "obs, reward, done, info = env.step(DOWN)\n",
+    "print()\n",
+    "print(obs, reward, done, info)\n",
+    "print()\n",
+    "env.render()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 7,
+   "id": "6c2d3773-0f96-4044-add0-49d7aed1eda9",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "5 0 False {'prob': 1.0}\n",
+      "  (Right)\n",
+      "SFFF\n",
+      "FF\u001b[41mF\u001b[0mF\n",
+      "HFFG\n"
+     ]
+    }
+   ],
+   "source": [
+    "env.step(RIGHT)\n",
+    "print(obs, reward, done, info)\n",
+    "env.render()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "a392df31-037f-43ed-b10a-ba49d2665e6c",
+   "metadata": {},
+   "source": [
+    "# Armar una función que corra un episodio completo y devuelta el retorno acumulado\n",
+    "\n",
+    "Recibe el entorno, la política y la posición inicial del robot\n",
+    "Devuelve el retorno (suma de los rewards)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "id": "2ef02bab-d5ab-4d84-a660-d7434719f7d0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def get_discounted_return(r, gamma=0.9):\n",
+    "    # Por si es una lista\n",
+    "    r = np.array(r, dtype=float)\n",
+    "    \"\"\"Take 1D float array of rewards and compute discounted reward \"\"\"\n",
+    "    discounted_r = np.zeros_like(r)\n",
+    "    running_add = 0\n",
+    "    for t in reversed(range(0, r.size)):\n",
+    "        running_add = running_add * gamma + r[t]\n",
+    "        discounted_r[t] = running_add\n",
+    "    return discounted_r[0]\n",
+    "\n",
+    "def run_episode(env, policy, start_pos, gamma=1.0):\n",
+    "    obs = env.reset(start_pos)\n",
+    "    done = False\n",
+    "    total_return = []\n",
+    "    rewards = []\n",
+    "    while not done:\n",
+    "        # Implementar\n",
+    "        break\n",
+    "    \n",
+    "    return total_return"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "bce3936a-8f3b-4169-9d2c-c3e7cc7b1e83",
+   "metadata": {},
+   "source": [
+    "# Ejercicio 1:\n",
+    "- Entorno determinístico\n",
+    "- Penalidad del paso = 0 \n",
+    "- Sin discount\n",
+    "- Partiendo de posición 0: (0,0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "96ae78be-86d2-4d6f-a07d-528745037400",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "start_pos = 0\n",
+    "step_penalty = 0"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "9895e6d7-bbc6-42bc-a29d-396964423d58",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "env = get_frozenlake_env(False, step_penalty=step_penalty)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "f4bf2f8d-d66d-4590-bf3c-cb6e75585a8a",
+   "metadata": {},
+   "source": [
+    "### Evaluar las distintas políticas pariendo desde la posición 0"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "ebcc84e5-5c94-4658-a582-716ce7a9d828",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Return policy_1: 0\n",
+      "Return policy_2: 0\n",
+      "Return policy_3: 0\n",
+      "Return policy_4: 0\n"
+     ]
+    }
+   ],
+   "source": [
+    "for i, policy in enumerate(policies):\n",
+    "    r = run_episode(env, policy=policy, start_pos=start_pos)\n",
+    "    print(f'Return policy_{i+1}:', r)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "538a9717-3d46-4f63-815d-a5e9ff885d59",
+   "metadata": {},
+   "source": [
+    "# Ejercicio 2:\n",
+    "- Entorno determinístico\n",
+    "- Penalidad del paso = 0.01 \n",
+    "- Sin discount\n",
+    "- Partiendo de posición 0: (0,0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "fe89538d-856e-43df-a55c-54c6f93ec107",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "start_pos = 0\n",
+    "step_penalty = 0.01\n",
+    "env = get_frozenlake_env(False, step_penalty=step_penalty)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "677b88a2-afe4-4ee7-9697-bce68914c966",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Return policy_1: 0\n",
+      "Return policy_2: 0\n",
+      "Return policy_3: 0\n",
+      "Return policy_4: 0\n"
+     ]
+    }
+   ],
+   "source": [
+    "for i, policy in enumerate(policies):\n",
+    "    r = run_episode(env, policy=policy, start_pos=start_pos)\n",
+    "    print(f'Return policy_{i+1}:', r)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4233c782-f0d6-4e4d-b13a-c5ee71c4c43c",
+   "metadata": {},
+   "source": [
+    "# Ejercicio 3:\n",
+    "- Entorno determinístico\n",
+    "- Penalidad del paso = 0 \n",
+    "- gamma = 0.9\n",
+    "- Partiendo de posición 0: (0,0)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "32fbbef9-0f38-4ad8-acdf-bebccff15590",
+   "metadata": {},
+   "source": [
+    "### En este entorne debe crear la función get_discounted_return y modificar run_episode acorde"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "97f17045-9207-495f-8e21-70204829ea54",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def get_discounted_return(r, gamma=0.9):\n",
+    "    # r es una lista o un numpy.array con todos los retornos del episodio\n",
+    "    r = np.array(r, dtype=float)\n",
+    "    # Implementar\n",
+    "    discounted_r = 0 \n",
+    "    return discounted_r"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "2c2c3d63-1f51-4916-904c-3f5893aec628",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def run_episode(env, policy, start_pos, gamma=1.0):\n",
+    "    obs = env.reset(start_pos)\n",
+    "    done = False\n",
+    "    rewards = []\n",
+    "    while not done:\n",
+    "        action = policy[obs]\n",
+    "        obs, reward, done, info = env.step(action)\n",
+    "        rewards.append(reward)\n",
+    "    return get_discounted_return(rewards, gamma)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "f056ec10-825a-4cb1-91e9-e6f8ec3daea8",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "start_pos = 0\n",
+    "step_penalty = 0\n",
+    "gamma = 0.9\n",
+    "env = get_frozenlake_env(False, step_penalty=step_penalty)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "cb824f01-91e9-41ca-9518-9f6e7b3afa85",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Return policy_1: 0\n",
+      "Return policy_2: 0\n",
+      "Return policy_3: 0\n",
+      "Return policy_4: 0\n"
+     ]
+    }
+   ],
+   "source": [
+    "for i, policy in enumerate(policies):\n",
+    "    r = run_episode(env, policy=policy, start_pos=start_pos, gamma=gamma)\n",
+    "    print(f'Return policy_{i+1}:', r)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4c4c016c-ecd9-42bb-ba70-ab1d1d73f71a",
+   "metadata": {},
+   "source": [
+    "# Ejercicio 4:\n",
+    "- Entorno aleatorio\n",
+    "- Penalidad del paso = 0 \n",
+    "- gamma = 1.0 (sin discount)\n",
+    "- Partiendo de posición 0: (0,0)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "0bd98e06-72b8-47d1-9407-f9ae8b800f8c",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "start_pos = 0\n",
+    "step_penalty = 0\n",
+    "gamma = 1.0\n",
+    "env = get_frozenlake_env(True, step_penalty=step_penalty)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "4d2ecfbb-2855-4d17-bde2-0d58005d6dc4",
+   "metadata": {},
+   "source": [
+    "### En este caso cuando se decide una acción, el agente se moverá hacia el lugar indicado con una probabilidad de 0.33, y se moverá hacia cualquiera de los costados con probabilidad 0.33\n",
+    "\n",
+    "### Cada vez que corra un episodio obtendrá un resultado diferente, intentelo"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "cae2be4b-a22e-46e6-b33a-87292846384c",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Return policy_1: 0.0\n",
+      "Return policy_2: 0.0\n",
+      "Return policy_3: 0.0\n",
+      "Return policy_4: 0.0\n"
+     ]
+    }
+   ],
+   "source": [
+    "# Correr varias veces y ver que el resultado cambia con cada iteración\n",
+    "for i, policy in enumerate(policies):\n",
+    "    r = run_episode(env, policy=policy, start_pos=start_pos, gamma=gamma)\n",
+    "    print(f'Return policy_{i+1}:', r)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "51be3603-4bf6-46ec-aa79-c34ac4a5741f",
+   "metadata": {},
+   "source": [
+    "### Armar una función que corra el episodio N veces y devuleva los retornos, la media y desvio"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "0eeb8417-521f-4d00-a18d-2110c0e5584d",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "def get_expected_return(env, policy, N=5000, start_pos=0, gamma=1.0):\n",
+    "    rewards = []\n",
+    "    \n",
+    "    for i in range(N):\n",
+    "        # Implementar\n",
+    "        pass\n",
+    "\n",
+    "    return rewards, np.mean(rewards), np.std(rewards)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "be7cb54a-5107-4012-9505-c797eb032f37",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Return policy_1: nan nan\n",
+      "Return policy_2: nan nan\n",
+      "Return policy_3: nan nan\n",
+      "Return policy_4: nan nan\n"
+     ]
+    },
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Return policy_1: 0.8001 0.3999249804650867\n",
+      "Return policy_2: 0.546 0.4978795034945705\n",
+      "Return policy_3: 0.5825 0.49314678342254237\n",
+      "Return policy_4: 0.0 0.0\n"
+     ]
+    }
+   ],
+   "source": [
+    "for i, policy in enumerate(policies):\n",
+    "    r = get_expected_return(env, policy, N=10_000, start_pos=start_pos, gamma=gamma)\n",
+    "    print(f'Return policy_{i+1}:', r[1], r[2])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "9bdcd127-0745-4d80-8ba8-63e8acbf191f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Return policy_1: 0.7975 0.4018628497385644\n",
+      "Return policy_2: 0.5425 0.4981904756215237\n",
+      "Return policy_3: 0.5799 0.4935747055917676\n",
+      "Return policy_4: 0.0 0.0\n"
+     ]
+    }
+   ],
+   "source": [
+    "for i, policy in enumerate(policies):\n",
+    "    r = get_expected_return(env, policy, N=10_000, start_pos=start_pos, gamma=gamma)\n",
+    "    print(f'Return policy_{i+1}:', r[1], r[2])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "3a021d25-ae7b-435d-a52a-ef14f187cd29",
+   "metadata": {},
+   "source": [
+    "# Ejercicio 5:\n",
+    "- Entorno determinístico\n",
+    "- Penalidad del paso = 0 \n",
+    "- gamma = 0.9 (sin discount)\n",
+    "- Partiendo de posición 0: (0,0)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "e2f9e73d-c231-46fc-a03b-cfda6bada81f",
+   "metadata": {},
+   "source": [
+    "### Calcular la value-function de todas los politicas"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "63c0f9ca-a4ab-49e3-81dd-4a519f91c46a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "step_penalty = 0\n",
+    "gamma = 0.9\n",
+    "env = get_frozenlake_env(False, step_penalty=step_penalty)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "id": "ba2b5f84-bb43-41e7-82be-486f63f74fb5",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Return policy_1:\n",
+      "0 0.6561000000000001\n",
+      "1 0.7290000000000001\n",
+      "2 0.81\n",
+      "3 0.9\n",
+      "4 0.7290000000000001\n",
+      "5 0.81\n",
+      "6 0.9\n",
+      "7 1.0\n",
+      "9 0.9\n",
+      "10 1.0\n",
+      "\n",
+      "Return policy_2:\n",
+      "0 0.6561000000000001\n",
+      "1 0.7290000000000001\n",
+      "2 0.81\n",
+      "3 0.9\n",
+      "4 0.7290000000000001\n",
+      "5 0.81\n",
+      "6 0.9\n",
+      "7 1.0\n",
+      "9 0.9\n",
+      "10 1.0\n",
+      "\n",
+      "Return policy_3:\n",
+      "0 0.43046721000000016\n",
+      "1 0.47829690000000014\n",
+      "2 0.5314410000000002\n",
+      "3 0.5904900000000002\n",
+      "4 0.7290000000000001\n",
+      "5 0.81\n",
+      "6 0.7290000000000001\n",
+      "7 0.6561000000000001\n",
+      "9 0.9\n",
+      "10 1.0\n",
+      "\n",
+      "Return policy_4:\n",
+      "0 0.0\n",
+      "1 0.0\n",
+      "2 0.0\n",
+      "3 0.0\n",
+      "4 0.0\n",
+      "5 0.0\n",
+      "6 0.0\n",
+      "7 0.0\n",
+      "9 0.0\n",
+      "10 0.0\n",
+      "\n"
+     ]
+    }
+   ],
+   "source": [
+    "for i, policy in enumerate(policies):\n",
+    "    print(f'Return policy_{i+1}:')\n",
+    "    for start_pos in range(12):\n",
+    "        if start_pos in policy:\n",
+    "            r = run_episode(env, policy=policy, start_pos=start_pos, gamma=gamma)\n",
+    "            print(start_pos, r)\n",
+    "    print()"
+   ]
+  }  
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.9.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
