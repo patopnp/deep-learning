@@ -1,7 +1,8 @@
+import gym
+from gym import spaces
 from stable_baselines3.common.vec_env import DummyVecEnv, VecEnvWrapper
 from stable_baselines3.common.monitor import Monitor
 from boardgame2 import ReversiEnv
-import gym
 import numpy as np
 
 def make_reversi_vec_env(

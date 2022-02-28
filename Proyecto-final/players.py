@@ -56,7 +56,7 @@ class RandomPlayer():
         
 
 class DictPolicyPlayer():
-    def __init__(self, player=1, board_shape=4, env=None, flatten_action=False, dict_folder='mdp/pi_func_only_winner.npy'):
+    def __init__(self, player=1, board_shape=4, env=None, flatten_action=False, dict_folder='mdp/pi_mdp.npy'):
         self.pi_dict = np.load(dict_folder, allow_pickle=True).item()
         if env is None:
             env = ReversiEnv(board_shape=board_shape)
@@ -65,9 +65,12 @@ class DictPolicyPlayer():
         self.board_shape = board_shape
     
     def predict(self, board):
+        # Elegir la acción optima y devolverla
         board_tuple = tuple((board * self.player).reshape(-1))
         action = self.pi_dict[board_tuple]
+        return action
         if self.flatten_action:
             return action
         else:
+            #Formatea la salida a fila col
             return [action // self.board_shape, action % self.board_shape]
